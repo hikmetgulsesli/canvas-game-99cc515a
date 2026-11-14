@@ -10,16 +10,26 @@
 
 export type PlayPageCanvasGameActionId = "start-game-1";
 
+export interface PlayPageCanvasGameStateView {
+  applicationState: "ready" | "playing";
+  highScore: number | null;
+}
+
 export interface PlayPageCanvasGameProps {
   actions?: {
     "start-game-1"?: () => void;
   };
 
+  state?: PlayPageCanvasGameStateView;
 }
 
 export type PlayPageCanvasGameActionCallbacks = NonNullable<PlayPageCanvasGameProps["actions"]>;
 
-export function PlayPageCanvasGame({ actions }: PlayPageCanvasGameProps) {
+export function PlayPageCanvasGame({ actions, state }: PlayPageCanvasGameProps) {
+  const applicationState = state?.applicationState ?? "ready";
+  const highScoreValue = state?.highScore ?? 0;
+  const isPlaying = applicationState === "playing";
+
   return (
     <>
       {/* Root Surface: SURF_PLAY_PAGE */}
@@ -42,7 +52,7 @@ export function PlayPageCanvasGame({ actions }: PlayPageCanvasGameProps) {
               {/* High Score Status Observable */}
               <div className="flex items-center space-x-2 bg-slate-800/80 px-4 py-1.5 rounded-full border border-slate-700/60">
                 <span className="text-xs font-medium uppercase tracking-wider text-slate-400">High score</span>
-                <span className="text-sm font-bold text-amber-400 tabular-nums" data-setfarm-element-ref="E000002" role="status" aria-label="High score" data-observable-refs="OBS_START_GAME_HIGH_SCORE_VALUE">0</span>
+                <span className="text-sm font-bold text-amber-400 tabular-nums" data-setfarm-element-ref="E000002" role="status" aria-label="High score" data-observable-refs="OBS_START_GAME_HIGH_SCORE_VALUE">{String(highScoreValue)}</span>
               </div>
       
               <div className="flex items-center space-x-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-800 text-xs text-slate-400">
@@ -67,7 +77,7 @@ export function PlayPageCanvasGame({ actions }: PlayPageCanvasGameProps) {
       
                 <div className="flex items-center space-x-4">
                   {/* Hidden / Post-action notification observable placeholder */}
-                  <div className="text-xs font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-md hidden">
+                  <div hidden={!isPlaying} className="text-xs font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-md">
                     Game started
                   </div>
       
